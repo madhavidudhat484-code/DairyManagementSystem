@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>View Collection - Dairy Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    color: #fff;
+}
+
+.navbar {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-brand { font-size: 18px; font-weight: 700; color: #38ef7d; }
+.btn-back {
+    padding: 7px 18px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+.btn-back:hover { background: rgba(255,255,255,0.12); }
+
+.page { max-width: 1100px; margin: 36px auto; padding: 0 20px 48px; }
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.page-title-left { display: flex; align-items: center; gap: 12px; }
+.page-title .icon { font-size: 30px; }
+.page-title h2 { font-size: 22px; font-weight: 700; }
+.page-title p { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+/* Filters */
+.filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.filters input, .filters select {
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+}
+.filters input::placeholder { color: rgba(255,255,255,0.25); }
+.filters input:focus, .filters select:focus { border-color: #38ef7d; }
+.filters select option { background: #203a43; }
+
+/* Summary cards */
+.summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.sum-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 16px 20px;
+    text-align: center;
+}
+.sum-card .val { font-size: 22px; font-weight: 700; color: #38ef7d; }
+.sum-card .lbl { font-size: 11px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px; }
+
+/* Table */
+.table-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    overflow-x: auto;
+}
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+thead tr {
+    background: rgba(56,239,125,0.08);
+    border-bottom: 1px solid rgba(56,239,125,0.15);
+}
+th {
+    padding: 13px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #38ef7d;
+    text-align: left;
+}
+td {
+    padding: 13px 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.badge-cow      { background: rgba(139,110,99,0.25); color: #c8a99b; }
+.badge-buffalo  { background: rgba(54,209,220,0.15);  color: #36d1dc; }
+.badge-morning  { background: rgba(255,200,50,0.15);  color: #ffc832; }
+.badge-evening  { background: rgba(138,100,255,0.15); color: #9b7dff; }
+
+.amount { color: #38ef7d; font-weight: 600; }
+
+.no-data {
+    text-align: center;
+    padding: 52px;
+    color: rgba(255,255,255,0.2);
+}
+.no-data .icon { font-size: 38px; display: block; margin-bottom: 10px; }
+
+.count-badge {
+    display: inline-block;
+    background: rgba(56,239,125,0.15);
+    color: #38ef7d;
+    border: 1px solid rgba(56,239,125,0.25);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 12px;
+    margin-left: 8px;
+}
+
+@media(max-width:640px) { .summary-row { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-brand">🐄 Dairy Manager</div>
+    <a href="/dashboard" class="btn-back">⬅ Back</a>
+</div>
+
+<div class="page">
+
+    <div class="top-bar">
+        <div class="page-title-left page-title">
+            <span class="icon">👁</span>
+            <div>
+                <h2>View Collection <span class="count-badge" id="countBadge">0</span></h2>
+                <p>All milk collection records</p>
+            </div>
+        </div>
+        <div class="filters">
+            <input type="date" id="filterDate">
+            <select id="filterTime">
+                <option value="">All Times</option>
+                <option>Morning</option>
+                <option>Evening</option>
+            </select>
+            <select id="filterType">
+                <option value="">All Types</option>
+                <option>Cow</option>
+                <option>Buffalo</option>
+            </select>
+            <input type="text" id="filterCode" placeholder="Customer Code">
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-row">
+        <div class="sum-card"><div class="val" id="sumRecords">0</div><div class="lbl">Records</div></div>
+        <div class="sum-card"><div class="val" id="sumLiters">0</div><div class="lbl">Total Liters</div></div>
+        <div class="sum-card"><div class="val" id="sumAvgFat">0</div><div class="lbl">Avg Fat %</div></div>
+        <div class="sum-card"><div class="val" id="sumAmount">₹0</div><div class="lbl">Total Amount</div></div>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Cust Code</th>
+                    <th>Liters</th>
+                    <th>Fat %</th>
+                    <th>SNF %</th>
+                    <th>Rate (₹)</th>
+                    <th>Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div class="no-data" id="noData">
+            <span class="icon">🥛</span>
+            No collection records found
+        </div>
+    </div>
+
+</div>
+
+<script>
+const allData = [];
+let filtered = [];
+
+function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    const noData = document.getElementById("noData");
+
+    if (data.length === 0) {
+        tbody.innerHTML = "";
+        noData.style.display = "block";
+        updateSummary([]);
+        return;
+    }
+    noData.style.display = "none";
+    tbody.innerHTML = data.map((r, i) => {
+        // Support both DB column names and sample data keys
+        const type  = r.milk_type     || r.type  || '';
+        const code  = r.customer_code || r.code  || '';
+        const date  = r.date  || '';
+        const time  = r.time  || '';
+        const liters = r.liters || 0;
+        const fat   = r.fat   || 0;
+        const snf   = r.snf   || 0;
+        const rate  = r.rate  || 0;
+        const total = r.total || 0;
+        return `
+        <tr>
+            <td style="color:rgba(255,255,255,0.3)">${i+1}</td>
+            <td>${date}</td>
+            <td><span class="badge ${time === 'Morning' ? 'badge-morning' : 'badge-evening'}">${time}</span></td>
+            <td><span class="badge ${type === 'Cow' ? 'badge-cow' : 'badge-buffalo'}">${type === 'Cow' ? '🐄' : '🐃'} ${type}</span></td>
+            <td><b>${code}</b></td>
+            <td>${liters} L</td>
+            <td>${fat}%</td>
+            <td>${snf}%</td>
+            <td>₹${rate}</td>
+            <td class="amount">₹${total}</td>
+        </tr>`;
+    }).join('');
+    updateSummary(data);
+}
+
+function updateSummary(data) {
+    document.getElementById("countBadge").textContent = data.length;
+    document.getElementById("sumRecords").textContent = data.length;
+    const totalL   = data.reduce((a, r) => a + parseFloat(r.liters || 0), 0);
+    const avgFat   = data.length ? (data.reduce((a, r) => a + parseFloat(r.fat || 0), 0) / data.length).toFixed(1) : 0;
+    const totalAmt = data.reduce((a, r) => a + parseFloat(r.total || 0), 0);
+    document.getElementById("sumLiters").textContent = totalL.toFixed(1);
+    document.getElementById("sumAvgFat").textContent = avgFat;
+    document.getElementById("sumAmount").textContent = "₹" + totalAmt.toFixed(0);
+}
+
+function applyFilters() {
+    const date = document.getElementById("filterDate").value;
+    const time = document.getElementById("filterTime").value;
+    const type = document.getElementById("filterType").value;
+    const code = document.getElementById("filterCode").value.trim().toLowerCase();
+
+    const result = allData.filter(r => {
+        const rtype = r.milk_type || r.type || '';
+        const rcode = r.customer_code || r.code || '';
+        return (!date || r.date === date) &&
+               (!time || r.time === time) &&
+               (!type || rtype === type) &&
+               (!code || rcode.toLowerCase().includes(code));
+    });
+    renderTable(result);
+}
+
+["filterDate","filterTime","filterType","filterCode"].forEach(id =>
+    document.getElementById(id).addEventListener("input", applyFilters)
+);
+
+// Load from Flask API
+fetch('/api/collection/all')
+    .then(r => r.json())
+    .then(d => {
+        if (d.success && d.data && d.data.length > 0) {
+            allData.push(...d.data);
+            renderTable(allData);
+        } else {
+            renderTable([]);
+        }
+    })
+    .catch(() => renderTable([]));
+</script>
+</body>
+</html>
