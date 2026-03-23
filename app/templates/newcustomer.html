@@ -1,1 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Customer - Dairy Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    color: #fff;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-brand { font-size: 18px; font-weight: 700; color: #38ef7d; }
+.btn-back {
+    padding: 7px 18px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-back:hover { background: rgba(255,255,255,0.12); }
+
+/* Page */
+.page { max-width: 700px; margin: 36px auto; padding: 0 20px 48px; }
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+.page-title .icon { font-size: 32px; }
+.page-title h2 { font-size: 22px; font-weight: 700; }
+.page-title p { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+/* Card */
+.form-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 32px;
+}
+
+/* Message */
+.msg {
+    display: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+.msg.success { background: rgba(56,239,125,0.12); color: #38ef7d; border: 1px solid rgba(56,239,125,0.25); }
+.msg.error   { background: rgba(255,80,80,0.12);  color: #ff6b6b;  border: 1px solid rgba(255,80,80,0.25); }
+.msg.warning { background: rgba(255,200,50,0.12); color: #ffc832;  border: 1px solid rgba(255,200,50,0.25); }
+.msg.update  { background: rgba(54,209,220,0.12); color: #36d1dc;  border: 1px solid rgba(54,209,220,0.25); }
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-1 { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+.field input, .field select {
+    padding: 11px 14px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: all 0.3s;
+}
+.field input::placeholder { color: rgba(255,255,255,0.2); }
+.field input:focus, .field select:focus {
+    border-color: #38ef7d;
+    background: rgba(56,239,125,0.07);
+    box-shadow: 0 0 0 3px rgba(56,239,125,0.08);
+}
+.field select option { background: #203a43; }
+
+.section-gap { margin-top: 18px; }
+
+/* Buttons */
+.btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+.btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-submit  { background: linear-gradient(to right, #11998e, #38ef7d); color: #0f2027; }
+.btn-update  { background: linear-gradient(to right, #f7971e, #ffd200); color: #0f2027; }
+.btn-delete  { background: linear-gradient(to right, #ff416c, #ff4b2b); color: #fff; }
+.btn-cancel  { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.12); }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-brand">🐄 Dairy Manager</div>
+    <a href="/dashboard" class="btn-back">⬅ Back</a>
+</div>
+
+<div class="page">
+    <div class="page-title">
+        <span class="icon">👤</span>
+        <div>
+            <h2>Add Customer</h2>
+            <p>Register a new milk supplier / farmer</p>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <div class="msg" id="msg"></div>
+
+        <div class="grid-2">
+            <div class="field">
+                <label>Customer Code</label>
+                <input type="text" id="code" placeholder="e.g. 101">
+            </div>
+            <div class="field">
+                <label>Mobile Number</label>
+                <input type="text" id="mobile" placeholder="10-digit number">
+            </div>
+        </div>
+
+        <div class="grid-2 section-gap">
+            <div class="field">
+                <label>First Name</label>
+                <input type="text" id="firstName" placeholder="First name">
+            </div>
+            <div class="field">
+                <label>Last Name</label>
+                <input type="text" id="lastName" placeholder="Last name">
+            </div>
+        </div>
+
+        <div class="grid-2 section-gap">
+            <div class="field">
+                <label>Milk Type</label>
+                <select id="milkType">
+                    <option value="">Select Type</option>
+                    <option value="Cow">🐄 Cow</option>
+                    <option value="Buffalo">🐃 Buffalo</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Status</label>
+                <select id="status">
+                    <option value="ON">✅ ON (Active)</option>
+                    <option value="OFF">❌ OFF (Inactive)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-submit" onclick="submitRecord()">✔ Submit</button>
+            <button class="btn btn-update" onclick="updateRecord()">✏ Update</button>
+            <button class="btn btn-delete" onclick="deleteRecord()">🗑 Delete</button>
+            <button class="btn btn-cancel" onclick="resetForm()">✕ Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── helpers ──────────────────────────────
+function showMsg(text, type) {
+    const el = document.getElementById("msg");
+    el.textContent = text;
+    el.className = "msg " + type;
+    el.style.display = "block";
+    setTimeout(() => el.style.display = "none", 3500);
+}
+
+function getCode() {
+    return document.getElementById("code").value.trim();
+}
+
+function getFormPayload() {
+    const first = document.getElementById("firstName").value.trim();
+    const last  = document.getElementById("lastName").value.trim();
+    return {
+        code:       getCode(),
+        first_name: first,
+        last_name:  last,
+        full_name:  first + " " + last,
+        mobile:     document.getElementById("mobile").value.trim(),
+        milk_type:  document.getElementById("milkType").value,
+        status:     document.getElementById("status").value
+    };
+}
+
+function fillForm(c) {
+    document.getElementById("code").value      = c.code       || "";
+    document.getElementById("firstName").value = c.first_name || "";
+    document.getElementById("lastName").value  = c.last_name  || "";
+    document.getElementById("mobile").value    = c.mobile     || "";
+    document.getElementById("milkType").value  = c.milk_type  || "";
+    document.getElementById("status").value    = c.status     || "ON";
+}
+
+function resetForm() {
+    document.querySelectorAll("input, select").forEach(el => el.value = "");
+}
+
+// ── Search / Load record from DB by code ──
+document.getElementById("code").addEventListener("blur", function() {
+    const code = this.value.trim();
+    if (!code) return;
+
+    fetch('/api/customer/all')
+        .then(r => r.json())
+        .then(d => {
+            if (d.success && d.data) {
+                const found = d.data.find(c => c.code === code);
+                if (found) {
+                    fillForm(found);
+                    showMsg("✔ Record Loaded — Edit and click Update", "update");
+                }
+            }
+        })
+        .catch(() => {});
+});
+
+// ── SUBMIT (Add new) ─────────────────────
+function submitRecord() {
+    const code = getCode();
+    if (!code) { showMsg("⚠ Please enter Customer Code", "warning"); return; }
+
+    const payload = getFormPayload();
+
+    fetch('/api/customer/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(d => showMsg(d.success ? "✔ Customer Added Successfully" : "✘ " + d.message, d.success ? "success" : "error"))
+    .catch(() => showMsg("✘ Server error", "error"));
+}
+
+// ── UPDATE ───────────────────────────────
+function updateRecord() {
+    const code = getCode();
+    if (!code) { showMsg("⚠ Please enter Customer Code", "warning"); return; }
+
+    const payload = getFormPayload();
+
+    fetch('/api/customer/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(d => showMsg(d.success ? "✔ Customer Updated Successfully" : "✘ " + d.message, d.success ? "update" : "error"))
+    .catch(() => showMsg("✘ Server error", "error"));
+}
+
+// ── DELETE ───────────────────────────────
+function deleteRecord() {
+    const code = getCode();
+    if (!code) { showMsg("⚠ Please enter Customer Code", "warning"); return; }
+
+    if (!confirm("Are you sure you want to delete record with Code: " + code + "?")) return;
+
+    fetch('/api/customer/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            showMsg("🗑 Customer Deleted Successfully", "error");
+            resetForm();
+        } else {
+            showMsg("✘ " + d.message, "error");
+        }
+    })
+    .catch(() => showMsg("✘ Server error", "error"));
+}
+</script>
+</body>
+</html>
