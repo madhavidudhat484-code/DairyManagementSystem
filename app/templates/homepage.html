@@ -1,1 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dairy Management System - Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    color: #fff;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-brand { font-size: 20px; font-weight: 700; color: #38ef7d; }
+.nav-brand span { color: #fff; font-weight: 300; }
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+}
+.nav-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #0f2027; font-size: 15px;
+}
+.btn-logout {
+    padding: 7px 18px;
+    border: 1px solid rgba(255,80,80,0.4);
+    border-radius: 20px;
+    background: rgba(255,80,80,0.1);
+    color: #ff6b6b;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-logout:hover { background: rgba(255,80,80,0.25); }
+
+/* Hero */
+.hero {
+    text-align: center;
+    padding: 48px 20px 32px;
+}
+.hero .emoji { font-size: 52px; display: block; margin-bottom: 10px; }
+.hero h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+.hero h1 span { color: #38ef7d; }
+.hero p { color: rgba(255,255,255,0.45); font-size: 14px; margin-top: 6px; }
+
+/* Stats bar */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 0 36px 32px;
+}
+.stat-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 16px 28px;
+    text-align: center;
+    min-width: 130px;
+}
+.stat-card .num { font-size: 26px; font-weight: 700; color: #38ef7d; }
+.stat-card .lbl { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+/* Menu Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 36px 48px;
+}
+
+.card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 28px 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+    text-decoration: none;
+    color: #fff;
+    display: block;
+}
+.card:hover {
+    transform: translateY(-6px);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.card .icon {
+    font-size: 38px;
+    display: block;
+    margin-bottom: 12px;
+}
+.card h3 { font-size: 15px; font-weight: 600; }
+.card p { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+.card.green  { border-color: rgba(56,239,125,0.25); }
+.card.blue   { border-color: rgba(54,209,220,0.25); }
+.card.yellow { border-color: rgba(255,200,50,0.25); }
+.card.teal   { border-color: rgba(0,176,155,0.25); }
+.card.pink   { border-color: rgba(161,140,209,0.25); }
+.card.cyan   { border-color: rgba(67,206,162,0.25); }
+
+.card.green:hover  { box-shadow: 0 20px 40px rgba(56,239,125,0.15); }
+.card.blue:hover   { box-shadow: 0 20px 40px rgba(54,209,220,0.15); }
+.card.yellow:hover { box-shadow: 0 20px 40px rgba(255,200,50,0.15); }
+.card.teal:hover   { box-shadow: 0 20px 40px rgba(0,176,155,0.15); }
+.card.pink:hover   { box-shadow: 0 20px 40px rgba(161,140,209,0.15); }
+.card.cyan:hover   { box-shadow: 0 20px 40px rgba(67,206,162,0.15); }
+
+.card .badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 8px;
+    font-weight: 600;
+}
+.card.green .badge  { background: rgba(56,239,125,0.15); color: #38ef7d; }
+.card.blue .badge   { background: rgba(54,209,220,0.15); color: #36d1dc; }
+.card.yellow .badge { background: rgba(255,200,50,0.15);  color: #ffc832; }
+.card.teal .badge   { background: rgba(0,176,155,0.15);   color: #00b09b; }
+.card.pink .badge   { background: rgba(161,140,209,0.15); color: #a18cd1; }
+.card.cyan .badge   { background: rgba(67,206,162,0.15);  color: #43cea2; }
+
+/* Popup */
+.overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+.overlay.show { display: flex; }
+.popup {
+    background: rgba(15,32,39,0.95);
+    border: 1px solid rgba(56,239,125,0.3);
+    border-radius: 20px;
+    padding: 36px 40px;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+.popup h3 { font-size: 20px; margin-bottom: 8px; }
+.popup p { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 24px; }
+.popup-btns { display: flex; gap: 12px; justify-content: center; }
+.btn-cancel {
+    padding: 10px 24px; border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff; font-family: 'Poppins', sans-serif;
+    font-size: 14px; cursor: pointer;
+}
+.btn-confirm {
+    padding: 10px 24px; border-radius: 10px;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    border: none; color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+}
+
+@media(max-width: 640px){
+    .grid { grid-template-columns: repeat(2,1fr); padding: 0 16px 36px; }
+    .hero h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="nav-brand">🐄 Dairy <span>Manager</span></div>
+    <div class="nav-user">
+        <div class="nav-avatar">A</div>
+        <span>Admin</span>
+        <button class="btn-logout" onclick="document.getElementById('logoutOverlay').classList.add('show')">Logout</button>
+    </div>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+    <span class="emoji">🥛</span>
+    <h1>Dairy <span>Management</span> System</h1>
+    <p>Manage collections, customers, and rates — all in one place</p>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+    <div class="stat-card"><div class="num" id="statCustomers">—</div><div class="lbl">Customers</div></div>
+    <div class="stat-card"><div class="num" id="statCollection">—</div><div class="lbl">Today's Collection</div></div>
+    <div class="stat-card"><div class="num" id="statAmount">—</div><div class="lbl">Today's Amount (₹)</div></div>
+</div>
+
+<!-- Menu -->
+<div class="grid">
+    <a href="/collection/add" class="card green">
+        <span class="icon">➕</span>
+        <h3>Add Collection</h3>
+        <p>Record milk collection</p>
+        <span class="badge">Daily Entry</span>
+    </a>
+    <a href="/collection/view" class="card blue">
+        <span class="icon">👁</span>
+        <h3>View Collection</h3>
+        <p>Browse all records</p>
+        <span class="badge">Reports</span>
+    </a>
+    <a href="/rates/add" class="card yellow">
+        <span class="icon">💰</span>
+        <h3>Add Rates</h3>
+        <p>Set milk rate chart</p>
+        <span class="badge">Pricing</span>
+    </a>
+    <a href="/rates/view" class="card teal">
+        <span class="icon">📊</span>
+        <h3>View Rate Chart</h3>
+        <p>See current rates</p>
+        <span class="badge">Charts</span>
+    </a>
+    <a href="/customers/add" class="card pink">
+        <span class="icon">👤</span>
+        <h3>Add Customers</h3>
+        <p>Register new farmer</p>
+        <span class="badge">Customers</span>
+    </a>
+    <a href="/customers/view" class="card cyan">
+        <span class="icon">📄</span>
+        <h3>Customer Details</h3>
+        <p>View all customers</p>
+        <span class="badge">Records</span>
+    </a>
+</div>
+
+<!-- Logout Popup -->
+<div class="overlay" id="logoutOverlay">
+    <div class="popup">
+        <h3>Logout?</h3>
+        <p>Are you sure you want to logout<br>from Dairy Manager?</p>
+        <div class="popup-btns">
+            <button class="btn-cancel" onclick="document.getElementById('logoutOverlay').classList.remove('show')">Cancel</button>
+            <button class="btn-confirm" onclick="logoutUser()">Logout</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function logoutUser() {
+    window.location.href = '/logout';
+}
+
+// Load realtime stats
+function loadStats() {
+    const today = new Date().toISOString().split("T")[0];
+
+    // Customer count
+    fetch('/api/customer/all')
+        .then(r => r.json())
+        .then(d => {
+            document.getElementById("statCustomers").textContent = d.success ? d.data.length : '0';
+        }).catch(() => document.getElementById("statCustomers").textContent = '0');
+
+    // Today's collection count + amount
+    fetch('/api/collection/all')
+        .then(r => r.json())
+        .then(d => {
+            if (d.success && d.data) {
+                const todayData = d.data.filter(r => r.date === today || (r.date && r.date.toString().startsWith(today)));
+                const totalLiters = todayData.reduce((a, r) => a + parseFloat(r.liters || 0), 0);
+                const totalAmount = todayData.reduce((a, r) => a + parseFloat(r.total || 0), 0);
+                document.getElementById("statCollection").textContent = totalLiters.toFixed(1) + ' L';
+                document.getElementById("statAmount").textContent = totalAmount.toFixed(0);
+            } else {
+                document.getElementById("statCollection").textContent = '0 L';
+                document.getElementById("statAmount").textContent = '0';
+            }
+        }).catch(() => {
+            document.getElementById("statCollection").textContent = '0 L';
+            document.getElementById("statAmount").textContent = '0';
+        });
+}
+
+loadStats();
+</script>
+
+</body>
+</html>
