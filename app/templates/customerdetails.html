@@ -1,1 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Details - Dairy Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    color: #fff;
+}
+
+.navbar {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-brand { font-size: 18px; font-weight: 700; color: #38ef7d; }
+.btn-back {
+    padding: 7px 18px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+.btn-back:hover { background: rgba(255,255,255,0.12); }
+
+.page { max-width: 1000px; margin: 36px auto; padding: 0 20px 48px; }
+
+.page-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.page-title-left { display: flex; align-items: center; gap: 12px; }
+.page-title .icon { font-size: 30px; }
+.page-title h2 { font-size: 22px; font-weight: 700; }
+.page-title p { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+/* Search */
+.search-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.search-bar input {
+    padding: 9px 16px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    width: 220px;
+}
+.search-bar input::placeholder { color: rgba(255,255,255,0.25); }
+.search-bar input:focus { border-color: #38ef7d; }
+
+/* Table card */
+.table-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+thead tr {
+    background: rgba(56,239,125,0.1);
+    border-bottom: 1px solid rgba(56,239,125,0.2);
+}
+th {
+    padding: 14px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #38ef7d;
+    text-align: left;
+}
+td {
+    padding: 14px 16px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.badge-cow     { background: rgba(139,110,99,0.25); color: #c8a99b; border: 1px solid rgba(139,110,99,0.3); }
+.badge-buffalo { background: rgba(54,209,220,0.15); color: #36d1dc; border: 1px solid rgba(54,209,220,0.25); }
+.badge-on      { background: rgba(56,239,125,0.12); color: #38ef7d; border: 1px solid rgba(56,239,125,0.2); }
+.badge-off     { background: rgba(255,80,80,0.12);  color: #ff6b6b; border: 1px solid rgba(255,80,80,0.2); }
+
+.no-data {
+    text-align: center;
+    padding: 48px;
+    color: rgba(255,255,255,0.25);
+    font-size: 14px;
+}
+.no-data .icon { font-size: 40px; display: block; margin-bottom: 10px; }
+
+/* Count badge */
+.count-badge {
+    display: inline-block;
+    background: rgba(56,239,125,0.15);
+    color: #38ef7d;
+    border: 1px solid rgba(56,239,125,0.25);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-brand">🐄 Dairy Manager</div>
+    <a href="/dashboard" class="btn-back">⬅ Back</a>
+</div>
+
+<div class="page">
+    <div class="page-title">
+        <div class="page-title-left">
+            <span class="icon">📄</span>
+            <div>
+                <h2>Customer Details <span class="count-badge" id="countBadge">5</span></h2>
+                <p>All registered milk suppliers</p>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search customer..." oninput="filterTable()">
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table id="customerTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cust Code</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Mobile No</th>
+                    <th>Milk Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Loaded by JS / Flask -->
+            </tbody>
+        </table>
+        <div class="no-data" id="noData" style="display:none;">
+            <span class="icon">🔍</span>
+            No customers found
+        </div>
+    </div>
+</div>
+
+<script>
+let allCustomers = [];
+
+function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    const noData = document.getElementById("noData");
+    if (data.length === 0) {
+        tbody.innerHTML = "";
+        noData.style.display = "block";
+        document.getElementById("countBadge").textContent = 0;
+        return;
+    }
+    noData.style.display = "none";
+    document.getElementById("countBadge").textContent = data.length;
+    tbody.innerHTML = data.map((c, i) => {
+        const code      = c.code       || '';
+        const firstName = c.first_name || c.first || '';
+        const lastName  = c.last_name  || c.last  || '';
+        const mobile    = c.mobile     || '';
+        const milkType  = c.milk_type  || c.type  || '';
+        const status    = c.status     || '';
+        return `
+        <tr>
+            <td style="color:rgba(255,255,255,0.3)">${i+1}</td>
+            <td><b>${code}</b></td>
+            <td>${firstName}</td>
+            <td>${lastName}</td>
+            <td>${mobile}</td>
+            <td><span class="badge ${milkType === 'Cow' ? 'badge-cow' : 'badge-buffalo'}">${milkType === 'Cow' ? '🐄' : '🐃'} ${milkType}</span></td>
+            <td><span class="badge ${status === 'ON' ? 'badge-on' : 'badge-off'}">${status}</span></td>
+        </tr>`;
+    }).join('');
+}
+
+function filterTable() {
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = allCustomers.filter(c =>
+        Object.values(c).some(v => String(v).toLowerCase().includes(q))
+    );
+    renderTable(filtered);
+}
+
+fetch('/api/customer/all')
+    .then(r => r.json())
+    .then(d => {
+        if (d.success && d.data && d.data.length > 0) {
+            allCustomers = d.data;
+            renderTable(allCustomers);
+        } else {
+            renderTable([]);
+        }
+    })
+    .catch(() => renderTable([]));
+</script>
+</body>
+</html>
