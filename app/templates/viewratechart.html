@@ -1,1 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>View Rate Chart - Dairy Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    color: #fff;
+}
+
+.navbar {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-brand { font-size: 18px; font-weight: 700; color: #38ef7d; }
+.btn-back {
+    padding: 7px 18px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+.btn-back:hover { background: rgba(255,255,255,0.12); }
+
+.page { max-width: 900px; margin: 36px auto; padding: 0 20px 48px; }
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+.page-title .icon { font-size: 32px; }
+.page-title h2 { font-size: 22px; font-weight: 700; }
+.page-title p { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+.cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.rate-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    overflow: hidden;
+}
+.rate-card.cow-card     { border-top: 3px solid #f7971e; }
+.rate-card.buffalo-card { border-top: 3px solid #36d1dc; }
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.card-header .icon { font-size: 26px; }
+.card-header h3 { font-size: 18px; font-weight: 700; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: rgba(255,255,255,0.04); }
+th {
+    padding: 12px 18px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: center;
+}
+.cow-card th    { color: #f7971e; }
+.buffalo-card th { color: #36d1dc; }
+
+td {
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.85);
+}
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+.empty-row td {
+    color: rgba(255,255,255,0.2);
+    font-size: 12px;
+    padding: 28px;
+}
+
+/* Summary strip */
+.summary {
+    display: flex;
+    justify-content: space-around;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.03);
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.summary-item { text-align: center; }
+.summary-item .val { font-size: 20px; font-weight: 700; }
+.summary-item .lbl { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+.cow-card .summary-item .val    { color: #f7971e; }
+.buffalo-card .summary-item .val { color: #36d1dc; }
+
+@media(max-width:600px) { .cards-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-brand">🐄 Dairy Manager</div>
+    <a href="/dashboard" class="btn-back">⬅ Back</a>
+</div>
+
+<div class="page">
+    <div class="page-title">
+        <span class="icon">📊</span>
+        <div>
+            <h2>View Rate Chart</h2>
+            <p>Current milk rates for Cow & Buffalo</p>
+        </div>
+    </div>
+
+    <div class="cards-row">
+
+        <!-- COW TABLE -->
+        <div class="rate-card cow-card">
+            <div class="card-header">
+                <span class="icon">🐄</span>
+                <h3>Cow Milk Rates</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Fat %</th>
+                        <th>SNF %</th>
+                        <th>Rate (₹/L)</th>
+                    </tr>
+                </thead>
+                <tbody id="cowBody">
+                    <tr class="empty-row"><td colspan="5">No rates added yet</td></tr>
+                </tbody>
+            </table>
+            <div class="summary" id="cowSummary" style="display:none;">
+                <div class="summary-item"><div class="val" id="cowAvgFat">-</div><div class="lbl">Avg Fat</div></div>
+                <div class="summary-item"><div class="val" id="cowAvgSnf">-</div><div class="lbl">Avg SNF</div></div>
+                <div class="summary-item"><div class="val" id="cowAvgRate">-</div><div class="lbl">Avg Rate</div></div>
+            </div>
+        </div>
+
+        <!-- BUFFALO TABLE -->
+        <div class="rate-card buffalo-card">
+            <div class="card-header">
+                <span class="icon">🐃</span>
+                <h3>Buffalo Milk Rates</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Fat %</th>
+                        <th>SNF %</th>
+                        <th>Rate (₹/L)</th>
+                    </tr>
+                </thead>
+                <tbody id="bufBody">
+                    <tr class="empty-row"><td colspan="5">No rates added yet</td></tr>
+                </tbody>
+            </table>
+            <div class="summary" id="bufSummary" style="display:none;">
+                <div class="summary-item"><div class="val" id="bufAvgFat">-</div><div class="lbl">Avg Fat</div></div>
+                <div class="summary-item"><div class="val" id="bufAvgSnf">-</div><div class="lbl">Avg SNF</div></div>
+                <div class="summary-item"><div class="val" id="bufAvgRate">-</div><div class="lbl">Avg Rate</div></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function renderRates(data, bodyId, summaryId, avgFatId, avgSnfId, avgRateId) {
+    const tbody = document.getElementById(bodyId);
+    if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No rates added yet</td></tr>`;
+        return;
+    }
+    tbody.innerHTML = data.map((r, i) => {
+        const dateStr = r.date ? (typeof r.date === 'string' ? r.date.split('T')[0] : r.date) : '-';
+        return `
+        <tr>
+            <td style="color:rgba(255,255,255,0.3)">${i+1}</td>
+            <td>${dateStr}</td>
+            <td>${r.fat}</td>
+            <td>${r.snf}</td>
+            <td><b>₹ ${r.rate}</b></td>
+        </tr>`;
+    }).join('');
+
+    const avg = arr => (arr.reduce((a, b) => a + parseFloat(b), 0) / arr.length).toFixed(2);
+    document.getElementById(avgFatId).textContent  = avg(data.map(r => r.fat));
+    document.getElementById(avgSnfId).textContent  = avg(data.map(r => r.snf));
+    document.getElementById(avgRateId).textContent = "₹" + avg(data.map(r => r.rate));
+    document.getElementById(summaryId).style.display = "flex";
+}
+
+fetch('/api/rate/all')
+    .then(r => r.json())
+    .then(d => {
+        if (d.success && d.data && d.data.length > 0) {
+            const cow = d.data.filter(r => r.milk_type === "Cow");
+            const buf = d.data.filter(r => r.milk_type === "Buffalo");
+            renderRates(cow, "cowBody", "cowSummary", "cowAvgFat", "cowAvgSnf", "cowAvgRate");
+            renderRates(buf, "bufBody", "bufSummary", "bufAvgFat", "bufAvgSnf", "bufAvgRate");
+        } else {
+            renderRates([], "cowBody", "cowSummary", "cowAvgFat", "cowAvgSnf", "cowAvgRate");
+            renderRates([], "bufBody", "bufSummary", "bufAvgFat", "bufAvgSnf", "bufAvgRate");
+        }
+    })
+    .catch(() => {
+        renderRates([], "cowBody", "cowSummary", "cowAvgFat", "cowAvgSnf", "cowAvgRate");
+        renderRates([], "bufBody", "bufSummary", "bufAvgFat", "bufAvgSnf", "bufAvgRate");
+    });
+</script>
+</body>
+</html>
